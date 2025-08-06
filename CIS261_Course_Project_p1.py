@@ -47,6 +47,61 @@ def calculate_pay(total_hours, hourly_rate, tax_rate):
     net_pay = gross_pay - income_tax
     return gross_pay, net_pay, income_tax
 
+    
+
+def get_pay_period_dates():
+    from datetime import datetime
+    while True:
+        from_date_str = input('Enter pay period "from" date (mm/dd/yyyy): ')
+        to_date_str = input('Enter pay period "to" date (mm/dd/yyyy): ')
+        try:
+            from_date = datetime.strptime(from_date_str, "%m/%d/%Y")
+            to_date = datetime.strptime(to_date_str, "%m/%d/%Y")
+            if from_date <= to_date:
+                return from_date_str, to_date_str
+            else:
+                print("The 'from' date cannot be after the 'to' date. Please try again.")
+        except ValueError:
+            print('Invalid date format. Please use mm/dd/yyyy.')
+ 
+            
+            
+def process_employee_data(employee_list):
+        
+        totals = {
+            'num_employees': 0,
+            'total_hours_sum': 0.0,
+            'total_gross_pay_sum': 0.0,
+            'total_tax_sum': 0.0,
+            'total_net_pay_sum': 0.0
+            }
+        
+        print('\n---Processing All Employee Records---')
+        for employee in employee_list: from_date, to_date, employee_name, total_hours, hourly_rate, income_tax_rate = employee
+
+        gross_pay, net_pay, income_tax_amount = calculate_pay(total_hours, hourly_rate, income_tax_rate)
+
+        display_employee_details(employee_name, total_hours, hourly_rate, gross_pay, income_tax_rate, income_tax_amount, net_pay)
+
+        
+        totals['num_employees'] += 1
+        totals['total_hours_sum'] += get_total_hours
+        totals['total_gross_pay_sum'] += gross_pay
+        totals['total_tax_sum'] += income_tax_amount
+        totals['total_net_pay_sum'] += net_pay
+        return totals
+
+def display_totals_from_dict(totals_dict):
+    print('\n---- Overall Company Payroll Summary ----')
+    print(f'Total Number of Employees Processed: {totals_dict['num_employees']}')
+    print(f'Total Hours Worked Across All Employees: {totals_dict['total_hours_sum']:.2f}')
+    print(f'Total Gross Pay Across All Employees: ${totals_dict['total_gross_pay_sum']:.2f}')
+    print(f'Total Income Tax Collected: ${totals_dict['total_tax_sum']:.2f}')
+    print(f'Total Net Pay Distributed: ${totals_dict['total_net_pay_sum']:.2f}')
+
+    print('--------------------------------------------------------------------')
+
+
 def display_employee_details(name, hours, rate, gross, tax_rate, income_tax_amount, net):
     print('\n--- Employee PayRoll Details ---')
     print(f'Employee Name:{name}')
@@ -68,16 +123,14 @@ def display_totals(num_employees, total_hours_sum, total_gross_pay_sum, total_ta
     print('-----------------------------------------------------------')
 
 def main():
-    total_employees = 0
-    total_hours_sum = 0.0
-    total_gross_pay_sum = 0.0
-    total_tax_sum = 0.0
-    total_net_pay_sum = 0.0
+
+    employee_records = []
 
     print('Welcome To The Payroll Calculator!')
     print('Type "end" for Employee name to terminate the program.')
    
     while True:
+        from_date, to_date = get_pay_period_dates()
         employee_name = get_employee_name()
         if employee_name.lower() == 'end':
             break
@@ -86,22 +139,14 @@ def main():
         hourly_rate = get_hourly_rate()
         income_tax_rate = get_income_tax_rate()
 
-        gross_pay, net_pay, income_tax_amount = calculate_pay(total_hours, hourly_rate, income_tax_rate)
-
-        display_employee_details(employee_name, total_hours, hourly_rate, gross_pay, income_tax_rate, income_tax_amount, net_pay)
-
-        total_employees += 1
-        total_hours_sum += total_hours
-        total_gross_pay_sum += gross_pay
-        total_tax_sum += income_tax_amount
-        total_net_pay_sum += net_pay
-
-    if total_employees > 0:
-        display_totals(total_employees, total_hours_sum, total_gross_pay_sum, total_tax_sum, total_net_pay_sum)
-    else:
-        print('\nNo employee data was entered')
-        
-    print('\nThank you for using payroll calculator!')
+        employee_records.append([from_date, to_date, employee_name, total_hours, hourly_rate, income_tax_rate])
+        if employee_records:
+            payroll_totals = process_employee_data(employee_records)
+            display_totals_from_dict(payroll_totals)
+        else:
+            print('\nNo employee data was entered.')
+            
+            print('\nThank you for using payroll calculator!')
 
 if __name__=='__main__':
     main()
