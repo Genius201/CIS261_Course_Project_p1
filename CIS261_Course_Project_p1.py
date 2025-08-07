@@ -50,7 +50,6 @@ def calculate_pay(total_hours, hourly_rate, tax_rate):
     
 
 def get_pay_period_dates():
-    from datetime import datetime
     while True:
         from_date_str = input('Enter pay period "from" date (mm/dd/yyyy): ')
         to_date_str = input('Enter pay period "to" date (mm/dd/yyyy): ')
