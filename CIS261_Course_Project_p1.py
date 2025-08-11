@@ -82,8 +82,7 @@ def process_employee_data(employee_list):
         totals['total_hours_sum'] += total_hours
         totals['total_gross_pay_sum'] += gross_pay
         totals['total_tax_sum'] += income_tax_amount
-       totals['total_net_pay_sum'] += net_pay
-  
+        totals['total_net_pay_sum'] += net_pay
     return totals
 
 def display_totals_from_dict(totals_dict):
