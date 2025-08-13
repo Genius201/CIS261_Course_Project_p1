@@ -64,7 +64,7 @@ def get_pay_period_dates():
             print('Invalid date format. Please use mm/dd/yyyy.')
  
             
-def process_employee_data(employee_list):
+def process_and_display_employee_data(employee_list):
     totals = {
         'num_employees': 0,
         'total_hours_sum': 0.0,
@@ -74,9 +74,11 @@ def process_employee_data(employee_list):
     }
         
     print('\n--- Processing All Employee Records ---')
-    for employee in employee_list:
-        from_date, to_date, employee_name, total_hours, hourly_rate, income_tax_rate = employee
+    for record in employee_list:
+        from_date, to_date, employee_name, total_hours, hourly_rate, income_tax_rate = record
+
         gross_pay, net_pay, income_tax_amount = calculate_pay(total_hours, hourly_rate, income_tax_rate)
+
         display_employee_details(employee_name, total_hours, hourly_rate, gross_pay, income_tax_rate, income_tax_amount, net_pay)
     
         totals['num_employees'] += 1
@@ -84,16 +86,8 @@ def process_employee_data(employee_list):
         totals['total_gross_pay_sum'] += gross_pay
         totals['total_tax_sum'] += income_tax_amount
         totals['total_net_pay_sum'] += net_pay
+    
     return totals
-
-def display_totals_from_dict(totals_dict):
-    print('\n---- Overall Company Payroll Summary ----')
-    print(f"Total Number of Employees Processed: {totals_dict['num_employees']}")
-    print(f"Total Hours Worked Across All Employees: {totals_dict['total_hours_sum']:.2f}")
-    print(f"Total Gross Pay Across All Employees: ${totals_dict['total_gross_pay_sum']:.2f}")
-    print(f"Total Income Tax Collected: ${totals_dict['total_tax_sum']:.2f}")
-    print(f"Total Net Pay Distributed: ${totals_dict['total_net_pay_sum']:.2f}")
-    print('--------------------------------------------------------------------')
 
 
 def display_employee_details(name, hours, rate, gross, tax_rate, income_tax_amount, net):
@@ -116,22 +110,15 @@ def display_totals(num_employees, total_hours_sum, total_gross_pay_sum, total_ta
     print(f'Total net pay distributed:${total_net_pay_sum:.2f}')
     print('-----------------------------------------------------------')
 
-def save_employee_records_to_file(employee_records, filename="employee_records.csv"):
-    with open(filename, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["From Date", "To Date", "Employee Name", "Total Hours", "Hourly Rate", "Income Tax Rate"])
-        for record in employee_records:
-            writer.writerow(record)
-    print(f"\nEmployee records have been saved to {filename}.")
-
 def main():
     employee_records = []
+     
+   from_date, to_date = get_pay_period_dates()
 
     print('Welcome To The Payroll Calculator!')
     print('Type "end" for Employee name to terminate the program.')
    
     while True:
-        from_date, to_date = get_pay_period_dates()
         employee_name = get_employee_name()
         if employee_name.lower() == 'end':
             break
@@ -144,37 +131,21 @@ def main():
 
         while True:
             add_another = input('\nAdd Another Employee?(y/n):').strip().lower()
-            if add_another == 'n':
-                if employee_records:
-                    payroll_totals = process_employee_data(employee_records)
-                    display_totals_from_dict(payroll_totals)
-                     
-                    save_employee_records_to_file(employee_records)
-                else:
-                    print('\nNo employee data was entered.')
-                print('\nThank you for using the payroll calculator!')
-                return
-            elif add_another == 'y':
-                print('\n---Adding Next Employee---')
+            if add_another in ['y', 'n']:
                 break
             else:
-                print("Invalid input.Please enter 'yes' or 'no'.")
+                print("Invalid input. Please enter 'y' or 'n'.")
 
+        if add_another == 'n':
+            break
+
+    if employee_records:
+        payroll totals = process_and_display_employee_data(employee_records)
+        display_totals_summary(payroll_totals)
+    else:(()
+        print('No employee data was entered')
+                
+       
+            
 if __name__=='__main__':
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
