@@ -113,7 +113,7 @@ def display_totals(num_employees, total_hours_sum, total_gross_pay_sum, total_ta
 def main():
     employee_records = []
      
-   from_date, to_date = get_pay_period_dates()
+    from_date, to_date = get_pay_period_dates()
 
     print('Welcome To The Payroll Calculator!')
     print('Type "end" for Employee name to terminate the program.')
@@ -140,12 +140,17 @@ def main():
             break
 
     if employee_records:
-        payroll totals = process_and_display_employee_data(employee_records)
-        display_totals_summary(payroll_totals)
-    else:(()
+        payroll_totals = process_and_display_employee_data(employee_records)
+        display_totals(
+            payroll_totals['num_employees'],
+            payroll_totals['total_hours_sum'],
+            payroll_totals['total_gross_pay_sum'],
+            payroll_totals['total_tax_sum'],
+            payroll_totals['total_net_pay_sum']
+        )
+    else:
         print('No employee data was entered')
                 
-       
-            
-if __name__=='__main__':
-    main()
+
+if __name__ == '__main__':
+   main()
