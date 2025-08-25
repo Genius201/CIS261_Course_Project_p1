@@ -1,5 +1,38 @@
 #Carl Shaffer CIS 261 Course Project part2 week 5
 from datetime import datetime
+import csv
+
+def validate_date(prompt):
+    while True:
+        date_str = input(prompt)
+        if date_str.lower() == "all":
+            return date_str
+        try:
+            datetime.datetime.strptime(date_str,'%m/%/d/%Y')
+            return date_str
+        except ValueError:
+            print('Invalid format. Use mm/dd/yyyy.')
+
+def write_employee_data(filename='employees.txt'):
+    try:
+        with open(filename, 'a') as file:
+            while True:
+                from_date = input('Enter from date (mm/dd/yyyy): ')
+                to_date = input('Enter to date (mm/dd/yyyy): ')
+                employee_name = input('Enter employee name: ')
+                try:
+                    hours_worked = float(input('Enter hours worked: '))
+                    pay_rate = float(input('Enter pay rate: '))
+                    income_tax_rate = float(input('Enter income tax rate: '"%"))
+                except ValueError:
+                    print('Invalid input. Please enter a number.')
+                    continue
+                    
+    except ValueError:
+        print('Invalid input.')
+   
+    record = f'{from_date}|{to_date}|{employee_name}|{hours_worked}|{pay_rate}|{income_tax_rate}\n' 
+    file.write(record)
 
 
 def get_employee_name():
