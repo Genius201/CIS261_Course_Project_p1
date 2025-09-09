@@ -2,6 +2,50 @@
 from datetime import datetime
 import csv
 
+
+def setup_user_data(filename):
+    user_ids = []
+    with open(filename, 'a+') as file:
+        file.seek(0)
+        for line in file:
+            parts = line.strip().split('|')
+            if parts:
+               user_ids.append(parts[0])
+    return user_ids
+
+def get_user_input(filename, user_ids):
+    while True:
+        user_id = input('Enter user ID(or "end" to quit):')
+        if user_id.lower() == 'end':
+            break
+       
+        if user_id in user_ids:
+            print('Error: User ID already exists. Enter a different user name')
+            continue
+        
+    password = input('Enter password: ')
+    auth_code = input('Enter authorization code("Admin" or "User"): ')
+    if auth_code not in ['Admin', 'User']:
+       print('Error:Invalid authorization code.')
+    
+    with open(filename, 'a') as file:
+        file.write(f'{user_id}|{password}|{auth_code}\n')
+        print(f'User "{user_id}"added successfully.')
+
+    user_ids.append(user_id)
+
+def display_user_data(filename):
+    print("\n--- Displaying All User Records ---")
+    try:
+        with open(filename, 'r') as file:
+            for line in file:
+                user_id, password, auth_code = line.strip().split('|')
+                print(f'User ID: {user_id}, Password: {password}, Authorization: {auth_code}')
+    except FileNotFoundError:
+        print(f'Error: File "{filename}" was not found.')
+
+
+
 def validate_date(prompt):
     while True:
         date_str = input(prompt)
@@ -158,6 +202,16 @@ def save_employee_records_to_file(employee_records, filename="employee_records.c
     print(f"\nEmployee records have been saved to {filename}.")
 
 def main():
+    file_name = "user_info.txt"
+    current_user_ids = setup_user_data(file_name)
+    print(f'Current user IDs for validation: {current_user_ids}')
+    print('-' * 30)
+
+    get_user_input(file_name, current_user_ids)
+    print('-' * 30)
+
+    display_user_data(file_name)
+
     employee_records = []
 
     print('Welcome To The Payroll Calculator!')
