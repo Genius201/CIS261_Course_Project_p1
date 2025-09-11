@@ -15,24 +15,27 @@ def setup_user_data(filename):
 
 def get_user_input(filename, user_ids):
     while True:
-        user_id = input('Enter user ID(or "end" to quit):')
-        if user_id.lower() == 'end':
-            break
-       
+        user_id = input('Enter user ID: ')
+        
         if user_id in user_ids:
             print('Error: User ID already exists. Enter a different user name')
             continue
         
-    password = input('Enter password: ')
-    auth_code = input('Enter authorization code("Admin" or "User"): ')
-    if auth_code not in ['Admin', 'User']:
-       print('Error:Invalid authorization code.')
-    
-    with open(filename, 'a') as file:
-        file.write(f'{user_id}|{password}|{auth_code}\n')
-        print(f'User "{user_id}"added successfully.')
+        password = input('Enter password: ')
+        auth_code = input('Enter authorization code("Admin" or "User"): ')
+        if auth_code not in ['Admin', 'User']:
+            print('Error:Invalid authorization code.')
+            continue
 
-    user_ids.append(user_id)
+        with open(filename, 'a') as file:
+            file.write(f'{user_id}|{password}|{auth_code}\n')
+            print(f'User "{user_id}"added successfully.')
+
+        user_ids.append(user_id)
+
+        add_another = input('Add another user?: ').strip().lower()
+        if add_another != 'y':
+            break
 
 def display_user_data(filename):
     print("\n--- Displaying All User Records ---")
@@ -43,8 +46,6 @@ def display_user_data(filename):
                 print(f'User ID: {user_id}, Password: {password}, Authorization: {auth_code}')
     except FileNotFoundError:
         print(f'Error: File "{filename}" was not found.')
-
-
 
 def validate_date(prompt):
     while True:
@@ -71,12 +72,17 @@ def write_employee_data(filename='employees.txt'):
                 except ValueError:
                     print('Invalid input. Please enter a number.')
                     continue
-                    
-    except ValueError:
-        print('Invalid input.')
    
-    record = f'{from_date}|{to_date}|{employee_name}|{hours_worked}|{pay_rate}|{income_tax_rate}\n' 
-    file.write(record)
+                record = f'{from_date}|{to_date}|{employee_name}|{hours_worked}|{pay_rate}|{income_tax_rate}\n' 
+                file.write(record)
+                print('Enployee data written successfully.')
+
+                another = input('Add another employee?')
+                if another != 'y':
+                    break
+
+    except ValueError:
+        print('Invalid input')
 
 
 def get_employee_name():
@@ -184,15 +190,6 @@ def display_employee_details(name, hours, rate, gross, tax_rate, income_tax_amou
     print(f'Net Pay:${net:.2f}')
     print('----------------------------------------------------------')
 
-def display_totals(num_employees, total_hours_sum, total_gross_pay_sum, total_tax_sum, total_net_pay_sum):
-    print('\n--- Overall Company Payroll Summary ---')
-    print(f'Total number of Employees Processed:{num_employees}')
-    print(f'Total hours worked for all Employees:{total_hours_sum:.2f}')
-    print(f'Total gross pay for all Employees:${total_gross_pay_sum:.2f}')
-    print(f'Total Income Tax collected:${total_tax_sum:.2f}')
-    print(f'Total net pay distributed:${total_net_pay_sum:.2f}')
-    print('-----------------------------------------------------------')
-
 def save_employee_records_to_file(employee_records, filename="employee_records.csv"):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -202,9 +199,15 @@ def save_employee_records_to_file(employee_records, filename="employee_records.c
     print(f"\nEmployee records have been saved to {filename}.")
 
 def main():
+    employee_records = []
+
+    print('Welcome To The Payroll Calculator!')
+    print('Type "end" for Employee name to terminate the program.')
+   
+
     file_name = "user_info.txt"
     current_user_ids = setup_user_data(file_name)
-    print(f'Current user IDs for validation: {current_user_ids}')
+   
     print('-' * 30)
 
     get_user_input(file_name, current_user_ids)
@@ -212,11 +215,7 @@ def main():
 
     display_user_data(file_name)
 
-    employee_records = []
-
-    print('Welcome To The Payroll Calculator!')
-    print('Type "end" for Employee name to terminate the program.')
-   
+    
     while True:
         from_date, to_date = get_pay_period_dates()
         employee_name = get_employee_name()
